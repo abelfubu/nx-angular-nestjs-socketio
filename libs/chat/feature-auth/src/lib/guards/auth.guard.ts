@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { AuthStore } from '../store/auth.store';
+import { AuthService } from '../services/auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -10,12 +8,15 @@ import { AuthStore } from '../store/auth.store';
 export class AuthGuard implements CanActivate {
   constructor(
     private readonly router: Router,
-    private readonly authStore: AuthStore,
+    private readonly authService: AuthService,
   ) {}
 
-  canActivate(): Observable<boolean> {
-    return this.authStore.isLoggedIn$.pipe(
-      tap((isLoggedIn) => !isLoggedIn && this.router.navigate(['/login'])),
-    );
+  canActivate(): boolean {
+    if (!this.authService.isJwtExpired()) {
+      return true;
+    }
+
+    this.router.navigate(['login']);
+    return false;
   }
 }

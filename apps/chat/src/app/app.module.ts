@@ -5,12 +5,14 @@ import { AppComponent } from './app.component';
 import { RouterModule, Routes } from '@angular/router';
 import {
   AuthGuard,
+  AuthInterceptor,
   ChatFeatureAuthModule,
   LoginComponent,
 } from '@socketio/chat/feature-auth';
 import { SharedUiModule } from '@socketio/shared/ui';
 import { PrivateComponent } from './private.component';
 import { RegisterComponent } from 'libs/chat/feature-auth/src/lib/components/register/register.component';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 const routes: Routes = [
   {
@@ -40,6 +42,9 @@ const routes: Routes = [
     ChatFeatureAuthModule,
     SharedUiModule,
     RouterModule.forRoot(routes, { initialNavigation: 'enabledBlocking' }),
+  ],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   ],
   bootstrap: [AppComponent],
 })

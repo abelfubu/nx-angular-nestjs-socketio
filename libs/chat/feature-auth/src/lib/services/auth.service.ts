@@ -1,13 +1,13 @@
+import { User } from '.prisma/client';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { EMPTY, Observable, of } from 'rxjs';
+import { JwtHelperService } from '@auth0/angular-jwt';
+import { TokenResponse } from '@socketio/shared/models';
+import { Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { LoginRequest } from '../models/login-request';
-import { StorageService } from './storage.service';
-import { TokenResponse } from '@socketio/shared/models';
-import { JwtHelperService } from '@auth0/angular-jwt';
-import { User } from '.prisma/client';
 import { RegisterRequest } from '../models/register-request';
+import { StorageService } from './storage.service';
 
 @Injectable({
   providedIn: 'root',
@@ -22,18 +22,17 @@ export class AuthService {
     return this.httpClient.post<TokenResponse>('/api/login', credentials).pipe(
       tap(({ token }) => this.storageService.setLocalStorage(token)),
       map(({ token }) => this.decodeJwtToken(token)),
-      // catchError((error) => this.handleErrorResponse(error)),
+      catchError((error) => this.handleErrorResponse(error)),
     );
   }
 
   register(credentials: RegisterRequest): Observable<User> {
-    return this.httpClient
-      .post<TokenResponse>('/api/register', credentials)
-      .pipe(
-        tap(({ token }) => this.storageService.setLocalStorage(token)),
-        map(({ token }) => this.decodeJwtToken(token)),
-        // catchError((error) => this.handleErrorResponse(error)),
-      );
+    const url = '/api/register';
+    return this.httpClient.post<TokenResponse>(url, credentials).pipe(
+      tap(({ token }) => this.storageService.setLocalStorage(token)),
+      map(({ token }) => this.decodeJwtToken(token)),
+      catchError((error) => this.handleErrorResponse(error)),
+    );
   }
 
   decodeJwtToken(token: string): User {
@@ -41,10 +40,14 @@ export class AuthService {
     return helper.decodeToken(token);
   }
 
-  private handleErrorResponse(
-    error: HttpErrorResponse,
-  ): Observable<HttpErrorResponse> {
+  isJwtExpired(): boolean {
+    const helper = new JwtHelperService();
+    const token = this.storageService.getLocalStorage();
+    return helper.isTokenExpired(token);
+  }
+
+  private handleErrorResponse(error: HttpErrorResponse): Observable<never> {
     this.storageService.removeLocalStorage();
-    return of(error);
+    return throwError(() => error);
   }
 }

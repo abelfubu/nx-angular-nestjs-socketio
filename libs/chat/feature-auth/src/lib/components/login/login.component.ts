@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { LoginRequest } from '../../models/login-request';
 import { AuthStore } from '../../store/auth.store';
 
@@ -18,6 +18,14 @@ export class LoginComponent {
     private readonly authStore: AuthStore,
     private readonly formBuilder: FormBuilder,
   ) {}
+
+  get email(): FormControl {
+    return this.form.controls.email as FormControl;
+  }
+
+  get password(): FormControl {
+    return this.form.controls.password as FormControl;
+  }
 
   login(credentials: LoginRequest): void {
     if (this.form.invalid) return;

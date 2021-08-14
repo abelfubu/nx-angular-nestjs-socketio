@@ -3,32 +3,24 @@
   <tng-form-field>
     <label for="email">Email</label>
     <input type="email" formControlName="email" id="email" />
-    <tng-error *ngIf="form.controls.email.errors?.email"
-      >Invalid email</tng-error
-    >
-    <tng-error
-      *ngIf="
-        form.controls.email.errors?.required && form.controls.email.touched
-      "
-      >Field is required</tng-error
-    >
+    <tng-error *ngIf="email.hasError('email')">Invalid email</tng-error>
+    <tng-error *ngIf="email.hasError('required') && email.touched">
+      Field is required
+    </tng-error>
   </tng-form-field>
 
   <!-- Password Field  -->
   <tng-form-field>
     <label for="password">Password</label>
     <input type="password" formControlName="password" id="password" />
-    <tng-error *ngIf="form.controls.password.errors?.minlength">
+    <tng-error *ngIf="password.hasError('minlength')">
       Password should be at least
-      {{ form.controls.password.errors?.minlength.requiredLength }}
+      {{ password.errors?.minlength.requiredLength }}
       characters long
     </tng-error>
-    <tng-error
-      *ngIf="
-        form.controls.email.errors?.required && form.controls.email.touched
-      "
-      >Field is required</tng-error
-    >
+    <tng-error *ngIf="password.hasError('required') && password.touched">
+      Field is required
+    </tng-error>
   </tng-form-field>
 
   <button>Login</button>
