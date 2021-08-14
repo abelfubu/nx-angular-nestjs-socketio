@@ -190,6 +190,10 @@
         },
         "serve": {
           "executor": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "chat:build:development",
+            "proxyConfig": "apps/chat/src/proxy.conf.json"
+          },
           "configurations": {
             "production": {
               "browserTarget": "chat:build:production"
@@ -244,6 +248,52 @@
           "executor": "@nrwl/linter:eslint",
           "options": {
             "lintFilePatterns": ["apps/chat-e2e/**/*.{js,ts}"]
+          }
+        }
+      }
+    },
+    "chat-feature-auth": {
+      "projectType": "library",
+      "root": "libs/chat/feature-auth",
+      "sourceRoot": "libs/chat/feature-auth/src",
+      "prefix": "socketio",
+      "targets": {
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/chat/feature-auth"],
+          "options": {
+            "jestConfig": "libs/chat/feature-auth/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/chat/feature-auth/src/**/*.ts",
+              "libs/chat/feature-auth/src/**/*.html"
+            ]
+          }
+        }
+      }
+    },
+    "shared-models": {
+      "root": "libs/shared/models",
+      "sourceRoot": "libs/shared/models/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/shared/models/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/shared/models"],
+          "options": {
+            "jestConfig": "libs/shared/models/jest.config.js",
+            "passWithNoTests": true
           }
         }
       }

@@ -18,7 +18,9 @@
       "@socketio/api/auth": ["libs/api/auth/src/index.ts"],
       "@socketio/api/data-access": ["libs/api/data-access/src/index.ts"],
       "@socketio/api/models": ["libs/api/models/src/index.ts"],
-      "@socketio/api/user": ["libs/api/user/src/index.ts"]
+      "@socketio/api/user": ["libs/api/user/src/index.ts"],
+      "@socketio/chat/feature-auth": ["libs/chat/feature-auth/src/index.ts"],
+      "@socketio/shared/models": ["libs/shared/models/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

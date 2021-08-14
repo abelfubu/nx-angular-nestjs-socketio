@@ -1,3 +1,4 @@
+import { User } from '.prisma/client';
 import { Injectable } from '@nestjs/common';
 import { DataService } from '@socketio/api/data-access';
 import { userQuery } from './user.data';
@@ -6,7 +7,7 @@ import { userQuery } from './user.data';
 export class UserService {
   constructor(private dataService: DataService) {}
 
-  async getAll(page = '1', limit = '100'): Promise<unknown[]> {
+  async getAll(page = '1', limit = '100'): Promise<Partial<User>[]> {
     return await this.dataService.user.findMany({
       ...userQuery,
       take: Number(limit),

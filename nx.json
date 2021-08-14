@@ -48,6 +48,12 @@
     "chat-e2e": {
       "tags": [],
       "implicitDependencies": ["chat"]
+    },
+    "chat-feature-auth": {
+      "tags": []
+    },
+    "shared-models": {
+      "tags": []
     }
   }
 }

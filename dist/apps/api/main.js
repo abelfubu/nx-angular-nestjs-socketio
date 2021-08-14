@@ -300,7 +300,7 @@ let AuthService = class AuthService {
                 user.password = yield this.hashPassword(user.password);
                 const newUser = yield this.dataService.user.create({ data: user });
                 delete newUser.password;
-                return this.jwtService.sign(newUser);
+                return { token: this.jwtService.sign(newUser) };
             }
             catch (error) {
                 if (error.code === 'P2002') {
@@ -318,7 +318,7 @@ let AuthService = class AuthService {
             if (!isValid)
                 throw new common_1.UnauthorizedException('Wrong credentials');
             delete user.password;
-            return this.jwtService.sign(user);
+            return { token: this.jwtService.sign(user) };
         });
     }
     hashPassword(password) {
@@ -619,8 +619,8 @@ var _a, _b, _c, _d, _e, _f, _g;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
 const tslib_1 = __webpack_require__(/*! tslib */ "tslib");
-const auth_1 = __webpack_require__(/*! @socketio/api/auth */ "./libs/api/auth/src/index.ts");
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const auth_1 = __webpack_require__(/*! @socketio/api/auth */ "./libs/api/auth/src/index.ts");
 const models_1 = __webpack_require__(/*! @socketio/api/models */ "./libs/api/models/src/index.ts");
 const user_service_1 = __webpack_require__(/*! ./user.service */ "./libs/api/user/src/lib/user.service.ts");
 let UserController = class UserController {
@@ -639,6 +639,7 @@ let UserController = class UserController {
     }
 };
 tslib_1.__decorate([
+    common_1.UseGuards(auth_1.JwtGuard),
     common_1.Get('user'),
     tslib_1.__param(0, common_1.Query('page')),
     tslib_1.__param(1, common_1.Query('limit')),
