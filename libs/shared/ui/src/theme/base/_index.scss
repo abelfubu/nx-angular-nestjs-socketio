@@ -1,0 +1,36 @@
+@forward 'text';
+@forward 'button';
+@forward 'sizing';
+@forward 'colors';
+@forward 'a';
+@forward 'input';
+@use 'fonts';
+
+* {
+  --webkit-font-smoothing: antialiased;
+  --moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
+
+  &::before,
+  &::after {
+    box-sizing: inherit;
+  }
+}
+
+:root {
+  font-size: clamp(1rem, 1.2vw, 1.2rem);
+}
+
+body {
+  background-color: var(--dark);
+  font-family: fonts.$normal;
+  min-height: 100vh;
+}
+
+::selection {
+  background-color: var(--primary);
+  color: var(--dark);
+}

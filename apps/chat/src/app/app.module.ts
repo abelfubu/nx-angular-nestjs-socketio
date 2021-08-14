@@ -3,13 +3,14 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
 import { RouterModule, Routes } from '@angular/router';
-
 import {
   AuthGuard,
   ChatFeatureAuthModule,
   LoginComponent,
 } from '@socketio/chat/feature-auth';
+import { SharedUiModule } from '@socketio/shared/ui';
 import { PrivateComponent } from './private.component';
+import { RegisterComponent } from 'libs/chat/feature-auth/src/lib/components/register/register.component';
 
 const routes: Routes = [
   {
@@ -22,6 +23,10 @@ const routes: Routes = [
     component: LoginComponent,
   },
   {
+    path: 'register',
+    component: RegisterComponent,
+  },
+  {
     path: '**',
     redirectTo: '',
     pathMatch: 'full',
@@ -29,15 +34,13 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, PrivateComponent],
   imports: [
     BrowserModule,
     ChatFeatureAuthModule,
-    RouterModule.forRoot(routes, {
-      initialNavigation: 'enabledBlocking',
-    }),
+    SharedUiModule,
+    RouterModule.forRoot(routes, { initialNavigation: 'enabledBlocking' }),
   ],
-  providers: [],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

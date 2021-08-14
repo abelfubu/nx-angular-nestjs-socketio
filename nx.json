@@ -54,6 +54,9 @@
     },
     "shared-models": {
       "tags": []
+    },
+    "shared-ui": {
+      "tags": []
     }
   }
 }

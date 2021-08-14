@@ -20,7 +20,8 @@
       "@socketio/api/models": ["libs/api/models/src/index.ts"],
       "@socketio/api/user": ["libs/api/user/src/index.ts"],
       "@socketio/chat/feature-auth": ["libs/chat/feature-auth/src/index.ts"],
-      "@socketio/shared/models": ["libs/shared/models/src/index.ts"]
+      "@socketio/shared/models": ["libs/shared/models/src/index.ts"],
+      "@socketio/shared/ui": ["libs/shared/ui/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

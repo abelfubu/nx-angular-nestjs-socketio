@@ -5,6 +5,7 @@ import { User } from '@prisma/client';
 import { Observable } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { LoginRequest } from '../models/login-request';
+import { RegisterRequest } from '../models/register-request';
 import { AuthService } from '../services/auth.service';
 import { StorageService } from '../services/storage.service';
 
@@ -31,7 +32,7 @@ export class AuthStore extends ComponentStore<AuthState> {
     this.setUser(this.authService.decodeJwtToken(token));
   }
 
-  readonly users$ = this.select(({ user }) => user);
+  readonly user$ = this.select(({ user }) => user);
   readonly isLoggedIn$ = this.select(({ isLoggedIn }) => isLoggedIn);
 
   readonly login = this.effect((credentials$: Observable<LoginRequest>) =>
@@ -45,6 +46,29 @@ export class AuthStore extends ComponentStore<AuthState> {
           ),
         ),
       ),
+    ),
+  );
+
+  readonly register = this.effect((credentials$: Observable<RegisterRequest>) =>
+    credentials$.pipe(
+      switchMap((credentials) =>
+        this.authService.register(credentials).pipe(
+          tap(() => this.router.navigate(['/'])),
+          tapResponse(
+            (user) => this.setUser(user),
+            (error) => console.log(error),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  readonly logout = this.effect((trigger$) =>
+    trigger$.pipe(
+      tap(() => {
+        this.storageService.removeLocalStorage();
+        this.router.navigate(['/login']);
+      }),
     ),
   );
 

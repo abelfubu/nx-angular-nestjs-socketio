@@ -1,5 +1,36 @@
 <form [formGroup]="form" (ngSubmit)="login(form.value)">
-  <input type="text" formControlName="email" />
-  <input type="text" formControlName="password" />
-  <button>Click</button>
+  <!-- Email Field  -->
+  <tng-form-field>
+    <label for="email">Email</label>
+    <input type="email" formControlName="email" id="email" />
+    <tng-error *ngIf="form.controls.email.errors?.email"
+      >Invalid email</tng-error
+    >
+    <tng-error
+      *ngIf="
+        form.controls.email.errors?.required && form.controls.email.touched
+      "
+      >Field is required</tng-error
+    >
+  </tng-form-field>
+
+  <!-- Password Field  -->
+  <tng-form-field>
+    <label for="password">Password</label>
+    <input type="password" formControlName="password" id="password" />
+    <tng-error *ngIf="form.controls.password.errors?.minlength">
+      Password should be at least
+      {{ form.controls.password.errors?.minlength.requiredLength }}
+      characters long
+    </tng-error>
+    <tng-error
+      *ngIf="
+        form.controls.email.errors?.required && form.controls.email.touched
+      "
+      >Field is required</tng-error
+    >
+  </tng-form-field>
+
+  <button>Login</button>
+  <a routerLink="/register">I am not registered yet</a>
 </form>

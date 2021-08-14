@@ -1,0 +1,17 @@
+:host {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+}
+
+form {
+  background-color: #fff;
+  border-radius: var(--radius-sm);
+  margin: auto;
+  max-width: 31.25rem;
+  padding: 2rem;
+}
+
+a {
+  display: block;
+}

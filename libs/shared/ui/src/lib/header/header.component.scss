@@ -1,0 +1,24 @@
+@use 'mixins';
+
+:host {
+  @include mixins.flex;
+  // background-color: var(--primary);
+  color: var(--contrast);
+  height: 4.5rem;
+  padding: 0 8vw;
+
+  ::ng-deep [logo] {
+    cursor: pointer;
+  }
+
+  ::ng-deep ul > * {
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    padding: 0.5rem 0.8rem;
+
+    &:hover {
+      background-color: var(--primary);
+      color: var(--dark);
+    }
+  }
+}

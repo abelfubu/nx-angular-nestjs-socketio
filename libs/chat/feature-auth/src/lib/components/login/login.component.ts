@@ -6,12 +6,12 @@ import { AuthStore } from '../../store/auth.store';
 @Component({
   selector: 'socketio-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
+  styleUrls: ['../styles.scss'],
 })
 export class LoginComponent {
   form = this.formBuilder.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.min(6)]],
+    password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
   constructor(

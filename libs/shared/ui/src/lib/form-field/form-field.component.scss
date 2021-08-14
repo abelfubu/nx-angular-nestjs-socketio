@@ -1,0 +1,11 @@
+:host {
+  ::ng-deep label {
+    font-size: 0.9rem;
+  }
+}
+
+:host-context(.error) {
+  ::ng-deep label {
+    color: var(--warn);
+  }
+}

@@ -14,11 +14,14 @@ export class UserController {
 
   @UseGuards(JwtGuard)
   @Get('user')
-  getAll(@Query('page') page: string, @Query('limit') limit: string): Promise<Partial<User>[]> {
+  getAll(
+    @Query('page') page: string,
+    @Query('limit') limit: string,
+  ): Promise<Partial<User>[]> {
     return this.userService.getAll(page, limit);
   }
 
-  @Post('user')
+  @Post('register')
   add(@Body() user: UserDto): Promise<TokenResponse> {
     return this.authService.add(user);
   }

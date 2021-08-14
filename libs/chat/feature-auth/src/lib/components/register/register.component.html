@@ -1,0 +1,17 @@
+<form [formGroup]="form" (ngSubmit)="register(form.value)">
+  <label for="username">Username</label>
+  <input type="username" formControlName="username" id="username" />
+  <label for="email">Email</label>
+  <input type="email" formControlName="email" id="email" />
+  <label for="password">Password</label>
+  <input type="password" formControlName="password" id="password" />
+  <label for="passwordConfirm">Confirm Password</label>
+  <input
+    type="passwordConfirm"
+    formControlName="passwordConfirm"
+    id="passwordConfirm"
+  />
+  <button>Register</button>
+  <a routerLink="/login">I am already registered, go to login</a>
+</form>
+<pre>{{ form.errors | json }}</pre>

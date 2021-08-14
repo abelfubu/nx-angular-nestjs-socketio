@@ -648,7 +648,7 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:returntype", typeof (_a = typeof Promise !== "undefined" && Promise) === "function" ? _a : Object)
 ], UserController.prototype, "getAll", null);
 tslib_1.__decorate([
-    common_1.Post('user'),
+    common_1.Post('register'),
     tslib_1.__param(0, common_1.Body()),
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [typeof (_b = typeof models_1.UserDto !== "undefined" && models_1.UserDto) === "function" ? _b : Object]),

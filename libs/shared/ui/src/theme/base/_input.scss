@@ -1,0 +1,11 @@
+input {
+  border: 1px solid var(--primary);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.8rem;
+  width: 100%;
+  margin: 0.3rem 0 1.4rem;
+
+  &.ng-invalid.ng-touched {
+    border-color: var(--warn);
+  }
+}

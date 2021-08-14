@@ -1,4 +1,4 @@
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNrc2JrbXk2ZTAwMTNud20wczM1bmwxZngiLCJjcmVhdGVkQXQiOiIyMDIxLTA4LTE0VDA5OjIyOjU4LjMxMFoiLCJ1cGRhdGVkQXQiOiIyMDIxLTA4LTE0VDA5OjIyOjU4LjMxMFoiLCJ1c2VybmFtZSI6ImFiZWxmdWJ1IiwiZW1haWwiOiJhYmVsZnVidUBnbWFpbC5jb20iLCJpYXQiOjE2Mjg5MzMxNzgsImV4cCI6MTYyODkzNjc3OH0.Nwi2-dUzNJ28wGihVArqgWmg3RyJHxhJgO36pR3DOyw
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNrc2JrbXk2ZTAwMTNud20wczM1bmwxZngiLCJjcmVhdGVkQXQiOiIyMDIxLTA4LTE0VDA5OjIyOjU4LjMxMFoiLCJ1cGRhdGVkQXQiOiIyMDIxLTA4LTE0VDA5OjIyOjU4LjMxMFoiLCJ1c2VybmFtZSI6ImFiZWxmdWJ1IiwiZW1haWwiOiJhYmVsZnVidUBnbWFpbC5jb20iLCJpYXQiOjE2Mjg5NTgwODEsImV4cCI6MTYyODk2MTY4MX0.EFR9TVXHAFkij5L88rg3csQX22eWPl67iMHx3cIv2oQ
 @url = http://localhost:3333/api
 
 ###
@@ -6,7 +6,7 @@ GET {{url}}/user?limit=10&page=1
 Authorization: Bearer {{token}}
 
 ###
-POST {{url}}/user
+POST {{url}}/register
 Content-Type: application/json
 
 {
