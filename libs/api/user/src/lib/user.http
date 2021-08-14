@@ -1,0 +1,24 @@
+@url = http://localhost:3333/api
+
+###
+GET {{url}}/user?limit=10&page=1
+
+###
+POST {{url}}/user
+Content-Type: application/json
+
+{
+	"username": "juian",
+	"password": "123456",
+	"email": "pedrposdfsdf@gmail.com"
+}
+
+###
+POST {{url}}/login
+Content-Type: application/json
+
+{
+	"password": "123456",
+	"email": "abelfubu@gmail.com"
+}
+

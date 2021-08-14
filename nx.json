@@ -33,6 +33,12 @@
     "api-data-access": {
       "tags": []
     },
+    "api-models": {
+      "tags": []
+    },
+    "api-user": {
+      "tags": []
+    },
     "chat": {
       "tags": []
     },

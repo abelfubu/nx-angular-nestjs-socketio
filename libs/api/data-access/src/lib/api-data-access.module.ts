@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
+import { DataService } from './data.service';
 
 @Module({
   controllers: [],
-  providers: [],
-  exports: [],
+  providers: [DataService],
+  exports: [DataService],
 })
 export class ApiDataAccessModule {}
