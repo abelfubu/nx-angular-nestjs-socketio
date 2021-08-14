@@ -1,7 +1,6 @@
-import { AuthService } from '@auth';
+import { AuthService } from '@socketio/api/auth';
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { UserResponse } from '@ngnest-sockets/api-interfaces';
-import { LoginDto, UserDto } from '../../../models';
+import { LoginDto, UserDto } from '@socketio/api/models';
 import { UserService } from './user.service';
 
 @Controller()
@@ -12,7 +11,7 @@ export class UserController {
   ) {}
 
   @Get('user')
-  getAll(@Query('page') page: string, @Query('limit') limit: string): Promise<UserResponse[]> {
+  getAll(@Query('page') page: string, @Query('limit') limit: string): Promise<unknown[]> {
     return this.userService.getAll(page, limit);
   }
 

@@ -51,6 +51,27 @@
         }
       }
     },
+    "api-auth": {
+      "root": "libs/api/auth",
+      "sourceRoot": "libs/api/auth/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/auth/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/auth"],
+          "options": {
+            "jestConfig": "libs/api/auth/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-data-access": {
       "root": "libs/api/data-access",
       "sourceRoot": "libs/api/data-access/src",
@@ -188,10 +209,7 @@
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "apps/chat/src/**/*.ts",
-              "apps/chat/src/**/*.html"
-            ]
+            "lintFilePatterns": ["apps/chat/src/**/*.ts", "apps/chat/src/**/*.html"]
           }
         },
         "test": {
