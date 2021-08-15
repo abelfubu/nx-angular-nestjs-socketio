@@ -258,7 +258,7 @@ ApiAuthModule = tslib_1.__decorate([
         imports: [
             data_access_1.ApiDataAccessModule,
             jwt_1.JwtModule.register({
-                secret: 'secret',
+                secret: process.env.SECRET,
                 signOptions: { expiresIn: '1h' },
             }),
         ],
@@ -378,7 +378,7 @@ let JwtStrategy = class JwtStrategy extends passport_1.PassportStrategy(passport
         super({
             jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
-            secretOrKey: 'secret',
+            secretOrKey: process.env.SECRET,
         });
     }
     validate(payload) {

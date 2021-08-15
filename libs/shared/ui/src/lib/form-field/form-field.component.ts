@@ -1,6 +1,5 @@
 import { Component, ContentChild, HostBinding, NgModule } from '@angular/core';
 import { NgControl } from '@angular/forms';
-import { TngError } from '../error/error.component';
 
 @Component({
   selector: 'tng-form-field',

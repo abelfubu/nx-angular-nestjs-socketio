@@ -19,22 +19,14 @@
             ]
           }
         ],
-        "@angular-eslint/directive-selector": [
-          "error",
-          {
-            "type": "attribute",
-            "style": "camelCase"
-          }
-        ],
         "@angular-eslint/component-selector": [
           "error",
           {
             "type": "element",
-            "style": "kebab-case"
+            "style": "kebab-case",
+            "prefix": ["socket-io", "tng"]
           }
-        ],
-        "@typescript-eslint/no-unused-vars": "error",
-        "@typescript-eslint/prefer-readonly": "error"
+        ]
       }
     },
     {

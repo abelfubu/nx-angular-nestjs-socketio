@@ -20,8 +20,8 @@
         "@angular-eslint/component-selector": [
           "error",
           {
-            "type": "element",
-            "prefix": "socketio",
+            "type": ["element", "attribute"],
+            "prefix": "tng",
             "style": "kebab-case"
           }
         ]
