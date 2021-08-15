@@ -138,13 +138,15 @@ exports.AppModule = void 0;
 const tslib_1 = __webpack_require__(/*! tslib */ "tslib");
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const user_1 = __webpack_require__(/*! @socketio/api/user */ "./libs/api/user/src/index.ts");
+const chat_1 = __webpack_require__(/*! @socketio/api/chat */ "./libs/api/chat/src/index.ts");
+const room_1 = __webpack_require__(/*! @socketio/api/room */ "./libs/api/room/src/index.ts");
 const app_controller_1 = __webpack_require__(/*! ./app.controller */ "./apps/api/src/app/app.controller.ts");
 const app_service_1 = __webpack_require__(/*! ./app.service */ "./apps/api/src/app/app.service.ts");
 let AppModule = class AppModule {
 };
 AppModule = tslib_1.__decorate([
     common_1.Module({
-        imports: [user_1.ApiUserModule],
+        imports: [user_1.ApiUserModule, chat_1.ApiChatModule, room_1.ApiRoomModule],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
     })
@@ -267,7 +269,7 @@ ApiAuthModule = tslib_1.__decorate([
         ],
         controllers: [],
         providers: [auth_service_1.AuthService, jwt_guard_1.JwtGuard, jwt_strategy_1.JwtStrategy],
-        exports: [auth_service_1.AuthService, jwt_guard_1.JwtGuard, jwt_strategy_1.JwtStrategy, passport_1.PassportModule],
+        exports: [auth_service_1.AuthService, jwt_guard_1.JwtGuard, jwt_strategy_1.JwtStrategy, jwt_1.JwtModule],
     })
 ], ApiAuthModule);
 exports.ApiAuthModule = ApiAuthModule;
@@ -426,6 +428,133 @@ exports.JwtStrategy = JwtStrategy;
 
 /***/ }),
 
+/***/ "./libs/api/chat/src/index.ts":
+/*!************************************!*\
+  !*** ./libs/api/chat/src/index.ts ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = __webpack_require__(/*! tslib */ "tslib");
+tslib_1.__exportStar(__webpack_require__(/*! ./lib/api-chat.module */ "./libs/api/chat/src/lib/api-chat.module.ts"), exports);
+
+
+/***/ }),
+
+/***/ "./libs/api/chat/src/lib/api-chat.module.ts":
+/*!**************************************************!*\
+  !*** ./libs/api/chat/src/lib/api-chat.module.ts ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ApiChatModule = void 0;
+const tslib_1 = __webpack_require__(/*! tslib */ "tslib");
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const chat_gateway_1 = __webpack_require__(/*! ./chat.gateway */ "./libs/api/chat/src/lib/chat.gateway.ts");
+const auth_1 = __webpack_require__(/*! @socketio/api/auth */ "./libs/api/auth/src/index.ts");
+const data_access_1 = __webpack_require__(/*! @socketio/api/data-access */ "./libs/api/data-access/src/index.ts");
+const room_1 = __webpack_require__(/*! @socketio/api/room */ "./libs/api/room/src/index.ts");
+let ApiChatModule = class ApiChatModule {
+};
+ApiChatModule = tslib_1.__decorate([
+    common_1.Module({
+        imports: [auth_1.ApiAuthModule, data_access_1.ApiDataAccessModule, room_1.ApiRoomModule],
+        providers: [chat_gateway_1.ChatGateway],
+        exports: [chat_gateway_1.ChatGateway],
+    })
+], ApiChatModule);
+exports.ApiChatModule = ApiChatModule;
+
+
+/***/ }),
+
+/***/ "./libs/api/chat/src/lib/chat.gateway.ts":
+/*!***********************************************!*\
+  !*** ./libs/api/chat/src/lib/chat.gateway.ts ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var _a, _b, _c, _d, _e, _f, _g;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ChatGateway = void 0;
+const tslib_1 = __webpack_require__(/*! tslib */ "tslib");
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const jwt_1 = __webpack_require__(/*! @nestjs/jwt */ "@nestjs/jwt");
+const websockets_1 = __webpack_require__(/*! @nestjs/websockets */ "@nestjs/websockets");
+const data_access_1 = __webpack_require__(/*! @socketio/api/data-access */ "./libs/api/data-access/src/index.ts");
+const models_1 = __webpack_require__(/*! @socketio/api/models */ "./libs/api/models/src/index.ts");
+const room_1 = __webpack_require__(/*! @socketio/api/room */ "./libs/api/room/src/index.ts");
+const socket_io_1 = __webpack_require__(/*! socket.io */ "socket.io");
+let ChatGateway = class ChatGateway {
+    constructor(jwtService, dataService, roomService) {
+        this.jwtService = jwtService;
+        this.dataService = dataService;
+        this.roomService = roomService;
+    }
+    handleConnection(socket) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            try {
+                const [, token] = socket.handshake.headers.authorization.split(' ');
+                const decoded = yield this.jwtService.verify(token);
+                const user = yield this.dataService.user.findUnique({ where: { id: decoded.id } });
+                if (!user)
+                    return this.disconnect(socket);
+                socket.data.user = user;
+                const rooms = yield this.roomService.getRoomsByUserId(user.id, {
+                    page: 1,
+                    limit: 10,
+                });
+                this.server.emit('message', `Welcome ${user.username}!`);
+                this.server.emit('rooms', rooms);
+            }
+            catch (error) {
+                this.disconnect(socket);
+            }
+        });
+    }
+    handleDisconnect(socket) {
+        socket.disconnect();
+    }
+    handleMessage(_socket, room) {
+        return this.roomService.create(room);
+        this.server.emit('message', 'test');
+    }
+    disconnect(socket) {
+        socket.emit('Error', new common_1.UnauthorizedException());
+        socket.disconnect();
+    }
+};
+tslib_1.__decorate([
+    websockets_1.WebSocketServer(),
+    tslib_1.__metadata("design:type", typeof (_a = typeof socket_io_1.Server !== "undefined" && socket_io_1.Server) === "function" ? _a : Object)
+], ChatGateway.prototype, "server", void 0);
+tslib_1.__decorate([
+    websockets_1.SubscribeMessage('createRoom'),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [typeof (_b = typeof socket_io_1.Socket !== "undefined" && socket_io_1.Socket) === "function" ? _b : Object, typeof (_c = typeof models_1.RoomDto !== "undefined" && models_1.RoomDto) === "function" ? _c : Object]),
+    tslib_1.__metadata("design:returntype", typeof (_d = typeof Promise !== "undefined" && Promise) === "function" ? _d : Object)
+], ChatGateway.prototype, "handleMessage", null);
+ChatGateway = tslib_1.__decorate([
+    websockets_1.WebSocketGateway({
+        cors: { origin: ['https://hoppscotch.io', 'http://localhost:4200'] },
+    }),
+    tslib_1.__metadata("design:paramtypes", [typeof (_e = typeof jwt_1.JwtService !== "undefined" && jwt_1.JwtService) === "function" ? _e : Object, typeof (_f = typeof data_access_1.DataService !== "undefined" && data_access_1.DataService) === "function" ? _f : Object, typeof (_g = typeof room_1.RoomService !== "undefined" && room_1.RoomService) === "function" ? _g : Object])
+], ChatGateway);
+exports.ChatGateway = ChatGateway;
+
+
+/***/ }),
+
 /***/ "./libs/api/data-access/src/index.ts":
 /*!*******************************************!*\
   !*** ./libs/api/data-access/src/index.ts ***!
@@ -518,6 +647,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = __webpack_require__(/*! tslib */ "tslib");
 tslib_1.__exportStar(__webpack_require__(/*! ./lib/user-dto */ "./libs/api/models/src/lib/user-dto.ts"), exports);
 tslib_1.__exportStar(__webpack_require__(/*! ./lib/login-dto */ "./libs/api/models/src/lib/login-dto.ts"), exports);
+tslib_1.__exportStar(__webpack_require__(/*! ./lib/room-dto */ "./libs/api/models/src/lib/room-dto.ts"), exports);
 
 
 /***/ }),
@@ -549,6 +679,36 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", String)
 ], LoginDto.prototype, "password", void 0);
 exports.LoginDto = LoginDto;
+
+
+/***/ }),
+
+/***/ "./libs/api/models/src/lib/room-dto.ts":
+/*!*********************************************!*\
+  !*** ./libs/api/models/src/lib/room-dto.ts ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.RoomDto = void 0;
+const tslib_1 = __webpack_require__(/*! tslib */ "tslib");
+const class_validator_1 = __webpack_require__(/*! class-validator */ "class-validator");
+class RoomDto {
+}
+tslib_1.__decorate([
+    class_validator_1.IsString(),
+    class_validator_1.IsNotEmpty(),
+    tslib_1.__metadata("design:type", String)
+], RoomDto.prototype, "name", void 0);
+tslib_1.__decorate([
+    class_validator_1.IsString(),
+    class_validator_1.IsNotEmpty(),
+    tslib_1.__metadata("design:type", String)
+], RoomDto.prototype, "description", void 0);
+exports.RoomDto = RoomDto;
 
 
 /***/ }),
@@ -585,6 +745,204 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", String)
 ], UserDto.prototype, "password", void 0);
 exports.UserDto = UserDto;
+
+
+/***/ }),
+
+/***/ "./libs/api/room/src/index.ts":
+/*!************************************!*\
+  !*** ./libs/api/room/src/index.ts ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = __webpack_require__(/*! tslib */ "tslib");
+tslib_1.__exportStar(__webpack_require__(/*! ./lib/api-room.module */ "./libs/api/room/src/lib/api-room.module.ts"), exports);
+tslib_1.__exportStar(__webpack_require__(/*! ./lib/room.service */ "./libs/api/room/src/lib/room.service.ts"), exports);
+
+
+/***/ }),
+
+/***/ "./libs/api/room/src/lib/api-room.module.ts":
+/*!**************************************************!*\
+  !*** ./libs/api/room/src/lib/api-room.module.ts ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ApiRoomModule = void 0;
+const tslib_1 = __webpack_require__(/*! tslib */ "tslib");
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const room_service_1 = __webpack_require__(/*! ./room.service */ "./libs/api/room/src/lib/room.service.ts");
+const data_access_1 = __webpack_require__(/*! @socketio/api/data-access */ "./libs/api/data-access/src/index.ts");
+const room_controller_1 = __webpack_require__(/*! ./room.controller */ "./libs/api/room/src/lib/room.controller.ts");
+let ApiRoomModule = class ApiRoomModule {
+};
+ApiRoomModule = tslib_1.__decorate([
+    common_1.Module({
+        imports: [data_access_1.ApiDataAccessModule],
+        controllers: [room_controller_1.RoomController],
+        providers: [room_service_1.RoomService],
+        exports: [room_service_1.RoomService],
+    })
+], ApiRoomModule);
+exports.ApiRoomModule = ApiRoomModule;
+
+
+/***/ }),
+
+/***/ "./libs/api/room/src/lib/room.controller.ts":
+/*!**************************************************!*\
+  !*** ./libs/api/room/src/lib/room.controller.ts ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var _a, _b, _c, _d, _e, _f, _g, _h;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.RoomController = void 0;
+const tslib_1 = __webpack_require__(/*! tslib */ "tslib");
+const client_1 = __webpack_require__(/*! .prisma/client */ ".prisma/client");
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const room_service_1 = __webpack_require__(/*! ./room.service */ "./libs/api/room/src/lib/room.service.ts");
+const models_1 = __webpack_require__(/*! @socketio/api/models */ "./libs/api/models/src/index.ts");
+const auth_1 = __webpack_require__(/*! @socketio/api/auth */ "./libs/api/auth/src/index.ts");
+let RoomController = class RoomController {
+    constructor(roomService) {
+        this.roomService = roomService;
+    }
+    getAll() {
+        return this.roomService.getAll();
+    }
+    create(room) {
+        return this.roomService.create(room);
+    }
+    addUser(id, user) {
+        return this.roomService.addUser(id, user.id);
+    }
+    removeUser(id, user) {
+        return this.roomService.removeUser(id, user.id);
+    }
+};
+tslib_1.__decorate([
+    common_1.Get(),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", []),
+    tslib_1.__metadata("design:returntype", typeof (_a = typeof Promise !== "undefined" && Promise) === "function" ? _a : Object)
+], RoomController.prototype, "getAll", null);
+tslib_1.__decorate([
+    common_1.Post(),
+    tslib_1.__param(0, common_1.Body()),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [typeof (_b = typeof models_1.RoomDto !== "undefined" && models_1.RoomDto) === "function" ? _b : Object]),
+    tslib_1.__metadata("design:returntype", typeof (_c = typeof Promise !== "undefined" && Promise) === "function" ? _c : Object)
+], RoomController.prototype, "create", null);
+tslib_1.__decorate([
+    common_1.Patch(':id/user'),
+    tslib_1.__param(0, common_1.Param('id')),
+    tslib_1.__param(1, auth_1.GetUser()),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [String, typeof (_d = typeof client_1.User !== "undefined" && client_1.User) === "function" ? _d : Object]),
+    tslib_1.__metadata("design:returntype", typeof (_e = typeof Promise !== "undefined" && Promise) === "function" ? _e : Object)
+], RoomController.prototype, "addUser", null);
+tslib_1.__decorate([
+    common_1.Delete(':id/user'),
+    tslib_1.__param(0, common_1.Param('id')),
+    tslib_1.__param(1, auth_1.GetUser()),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [String, typeof (_f = typeof client_1.User !== "undefined" && client_1.User) === "function" ? _f : Object]),
+    tslib_1.__metadata("design:returntype", typeof (_g = typeof Promise !== "undefined" && Promise) === "function" ? _g : Object)
+], RoomController.prototype, "removeUser", null);
+RoomController = tslib_1.__decorate([
+    common_1.UseGuards(auth_1.JwtGuard),
+    common_1.Controller('room'),
+    tslib_1.__metadata("design:paramtypes", [typeof (_h = typeof room_service_1.RoomService !== "undefined" && room_service_1.RoomService) === "function" ? _h : Object])
+], RoomController);
+exports.RoomController = RoomController;
+
+
+/***/ }),
+
+/***/ "./libs/api/room/src/lib/room.service.ts":
+/*!***********************************************!*\
+  !*** ./libs/api/room/src/lib/room.service.ts ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var _a;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.RoomService = void 0;
+const tslib_1 = __webpack_require__(/*! tslib */ "tslib");
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const data_access_1 = __webpack_require__(/*! @socketio/api/data-access */ "./libs/api/data-access/src/index.ts");
+let RoomService = class RoomService {
+    constructor(dataService) {
+        this.dataService = dataService;
+    }
+    getAll() {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return yield this.dataService.room.findMany({ include: { users: true } });
+        });
+    }
+    create(room) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            return yield this.dataService.room.create({ data: room });
+        });
+    }
+    getRoomsByUserId(userId, { page = 1, limit = 10 }) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const { rooms } = yield this.dataService.user.findUnique({
+                where: { id: userId },
+                select: { rooms: { take: limit, skip: (page - 1) * limit } },
+            });
+            return rooms;
+        });
+    }
+    addUser(id, userId) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            if (!userId)
+                throw new common_1.UnauthorizedException();
+            const room = yield this.dataService.room.findUnique({ where: { id } });
+            if (!room)
+                throw new common_1.NotFoundException('Room not found');
+            return yield this.dataService.room.update({
+                where: { id },
+                data: { users: { connect: { id: userId } } },
+                include: { users: true },
+            });
+        });
+    }
+    removeUser(id, userId) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            if (!userId)
+                throw new common_1.UnauthorizedException();
+            const room = yield this.dataService.room.findUnique({ where: { id } });
+            if (!room)
+                throw new common_1.NotFoundException('Room not found');
+            return yield this.dataService.room.update({
+                where: { id },
+                data: { users: { disconnect: { id: userId } } },
+                include: { users: true },
+            });
+        });
+    }
+};
+RoomService = tslib_1.__decorate([
+    common_1.Injectable(),
+    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof data_access_1.DataService !== "undefined" && data_access_1.DataService) === "function" ? _a : Object])
+], RoomService);
+exports.RoomService = RoomService;
 
 
 /***/ }),
@@ -823,6 +1181,17 @@ module.exports = require("@nestjs/passport");
 
 /***/ }),
 
+/***/ "@nestjs/websockets":
+/*!*************************************!*\
+  !*** external "@nestjs/websockets" ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("@nestjs/websockets");
+
+/***/ }),
+
 /***/ "@prisma/client":
 /*!*********************************!*\
   !*** external "@prisma/client" ***!
@@ -864,6 +1233,17 @@ module.exports = require("class-validator");
 /***/ (function(module, exports) {
 
 module.exports = require("passport-jwt");
+
+/***/ }),
+
+/***/ "socket.io":
+/*!****************************!*\
+  !*** external "socket.io" ***!
+  \****************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("socket.io");
 
 /***/ }),
 

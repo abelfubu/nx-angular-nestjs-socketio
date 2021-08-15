@@ -72,6 +72,27 @@
         }
       }
     },
+    "api-chat": {
+      "root": "libs/api/chat",
+      "sourceRoot": "libs/api/chat/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/chat/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/chat"],
+          "options": {
+            "jestConfig": "libs/api/chat/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-data-access": {
       "root": "libs/api/data-access",
       "sourceRoot": "libs/api/data-access/src",
@@ -109,6 +130,27 @@
           "outputs": ["coverage/libs/api/models"],
           "options": {
             "jestConfig": "libs/api/models/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "api-room": {
+      "root": "libs/api/room",
+      "sourceRoot": "libs/api/room/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/api/room/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/api/room"],
+          "options": {
+            "jestConfig": "libs/api/room/jest.config.js",
             "passWithNoTests": true
           }
         }
@@ -216,10 +258,7 @@
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": [
-              "apps/chat/src/**/*.ts",
-              "apps/chat/src/**/*.html"
-            ]
+            "lintFilePatterns": ["apps/chat/src/**/*.ts", "apps/chat/src/**/*.html"]
           }
         },
         "test": {
@@ -278,6 +317,31 @@
             "lintFilePatterns": [
               "libs/chat/feature-auth/src/**/*.ts",
               "libs/chat/feature-auth/src/**/*.html"
+            ]
+          }
+        }
+      }
+    },
+    "chat-feature-chat": {
+      "projectType": "library",
+      "root": "libs/chat/feature-chat",
+      "sourceRoot": "libs/chat/feature-chat/src",
+      "prefix": "socketio",
+      "targets": {
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/chat/feature-chat"],
+          "options": {
+            "jestConfig": "libs/chat/feature-chat/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/chat/feature-chat/src/**/*.ts",
+              "libs/chat/feature-chat/src/**/*.html"
             ]
           }
         }

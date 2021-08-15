@@ -16,10 +16,13 @@
     "baseUrl": ".",
     "paths": {
       "@socketio/api/auth": ["libs/api/auth/src/index.ts"],
+      "@socketio/api/chat": ["libs/api/chat/src/index.ts"],
       "@socketio/api/data-access": ["libs/api/data-access/src/index.ts"],
       "@socketio/api/models": ["libs/api/models/src/index.ts"],
+      "@socketio/api/room": ["libs/api/room/src/index.ts"],
       "@socketio/api/user": ["libs/api/user/src/index.ts"],
       "@socketio/chat/feature-auth": ["libs/chat/feature-auth/src/index.ts"],
+      "@socketio/chat/feature-chat": ["libs/chat/feature-chat/src/index.ts"],
       "@socketio/shared/models": ["libs/shared/models/src/index.ts"],
       "@socketio/shared/ui": ["libs/shared/ui/src/index.ts"]
     }

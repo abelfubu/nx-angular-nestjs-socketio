@@ -1,0 +1,7 @@
+<ng-container *ngIf="vm$ | async as vm">
+  <p>{{ vm.messages }}</p>
+
+  <ul>
+    <li *ngFor="let room of vm.rooms">{{ room.name }} | {{ room.description }}</li>
+  </ul>
+</ng-container>

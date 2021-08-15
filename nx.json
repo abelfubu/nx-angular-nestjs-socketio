@@ -33,10 +33,16 @@
     "api-auth": {
       "tags": []
     },
+    "api-chat": {
+      "tags": []
+    },
     "api-data-access": {
       "tags": []
     },
     "api-models": {
+      "tags": []
+    },
+    "api-room": {
       "tags": []
     },
     "api-user": {
@@ -50,6 +56,9 @@
       "implicitDependencies": ["chat"]
     },
     "chat-feature-auth": {
+      "tags": []
+    },
+    "chat-feature-chat": {
       "tags": []
     },
     "shared-models": {
