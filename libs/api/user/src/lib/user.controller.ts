@@ -1,6 +1,6 @@
 import { User } from '.prisma/client';
 import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
-import { AuthService, JwtGuard } from '@socketio/api/auth';
+import { AuthService, GetUser, JwtGuard } from '@socketio/api/auth';
 import { LoginDto, UserDto } from '@socketio/api/models';
 import { TokenResponse } from '@socketio/shared/models';
 import { UserService } from './user.service';
@@ -17,7 +17,9 @@ export class UserController {
   getAll(
     @Query('page') page: string,
     @Query('limit') limit: string,
+    @GetUser() user: User,
   ): Promise<Partial<User>[]> {
+    console.log(user);
     return this.userService.getAll(page, limit);
   }
 

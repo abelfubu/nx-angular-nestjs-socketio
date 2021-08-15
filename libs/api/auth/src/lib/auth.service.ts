@@ -12,7 +12,10 @@ import { TokenResponse } from '@socketio/shared/models';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly jwtService: JwtService, private readonly dataService: DataService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly dataService: DataService,
+  ) {}
 
   async add(user: UserDto): Promise<TokenResponse> {
     try {

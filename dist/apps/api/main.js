@@ -229,6 +229,7 @@ tslib_1.__exportStar(__webpack_require__(/*! ./lib/api-auth.module */ "./libs/ap
 tslib_1.__exportStar(__webpack_require__(/*! ./lib/auth.service */ "./libs/api/auth/src/lib/auth.service.ts"), exports);
 tslib_1.__exportStar(__webpack_require__(/*! ./lib/jwt.guard */ "./libs/api/auth/src/lib/jwt.guard.ts"), exports);
 tslib_1.__exportStar(__webpack_require__(/*! ./lib/jwt.strategy */ "./libs/api/auth/src/lib/jwt.strategy.ts"), exports);
+tslib_1.__exportStar(__webpack_require__(/*! ./lib/get-user.decorator */ "./libs/api/auth/src/lib/get-user.decorator.ts"), exports);
 
 
 /***/ }),
@@ -247,6 +248,7 @@ exports.ApiAuthModule = void 0;
 const tslib_1 = __webpack_require__(/*! tslib */ "tslib");
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const jwt_1 = __webpack_require__(/*! @nestjs/jwt */ "@nestjs/jwt");
+const passport_1 = __webpack_require__(/*! @nestjs/passport */ "@nestjs/passport");
 const data_access_1 = __webpack_require__(/*! @socketio/api/data-access */ "./libs/api/data-access/src/index.ts");
 const auth_service_1 = __webpack_require__(/*! ./auth.service */ "./libs/api/auth/src/lib/auth.service.ts");
 const jwt_guard_1 = __webpack_require__(/*! ./jwt.guard */ "./libs/api/auth/src/lib/jwt.guard.ts");
@@ -257,6 +259,7 @@ ApiAuthModule = tslib_1.__decorate([
     common_1.Module({
         imports: [
             data_access_1.ApiDataAccessModule,
+            passport_1.PassportModule.register({ defaultStrategy: 'jwt' }),
             jwt_1.JwtModule.register({
                 secret: process.env.SECRET,
                 signOptions: { expiresIn: '1h' },
@@ -264,7 +267,7 @@ ApiAuthModule = tslib_1.__decorate([
         ],
         controllers: [],
         providers: [auth_service_1.AuthService, jwt_guard_1.JwtGuard, jwt_strategy_1.JwtStrategy],
-        exports: [auth_service_1.AuthService, jwt_guard_1.JwtGuard, jwt_strategy_1.JwtStrategy],
+        exports: [auth_service_1.AuthService, jwt_guard_1.JwtGuard, jwt_strategy_1.JwtStrategy, passport_1.PassportModule],
     })
 ], ApiAuthModule);
 exports.ApiAuthModule = ApiAuthModule;
@@ -334,6 +337,25 @@ exports.AuthService = AuthService;
 
 /***/ }),
 
+/***/ "./libs/api/auth/src/lib/get-user.decorator.ts":
+/*!*****************************************************!*\
+  !*** ./libs/api/auth/src/lib/get-user.decorator.ts ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.GetUser = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+exports.GetUser = common_1.createParamDecorator((_data, context) => {
+    return context.switchToHttp().getRequest().user;
+});
+
+
+/***/ }),
+
 /***/ "./libs/api/auth/src/lib/jwt.guard.ts":
 /*!********************************************!*\
   !*** ./libs/api/auth/src/lib/jwt.guard.ts ***!
@@ -367,29 +389,37 @@ exports.JwtGuard = JwtGuard;
 
 "use strict";
 
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.JwtStrategy = void 0;
 const tslib_1 = __webpack_require__(/*! tslib */ "tslib");
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const passport_jwt_1 = __webpack_require__(/*! passport-jwt */ "passport-jwt");
 const passport_1 = __webpack_require__(/*! @nestjs/passport */ "@nestjs/passport");
+const data_access_1 = __webpack_require__(/*! @socketio/api/data-access */ "./libs/api/data-access/src/index.ts");
 let JwtStrategy = class JwtStrategy extends passport_1.PassportStrategy(passport_jwt_1.Strategy) {
-    constructor() {
+    constructor(dataService) {
         super({
             jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
             secretOrKey: process.env.SECRET,
         });
+        this.dataService = dataService;
     }
     validate(payload) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            return Object.assign({}, payload);
+            const user = yield this.dataService.user.findUnique({
+                where: { id: payload.id },
+            });
+            if (!user)
+                throw new common_1.UnauthorizedException();
+            return payload;
         });
     }
 };
 JwtStrategy = tslib_1.__decorate([
     common_1.Injectable(),
-    tslib_1.__metadata("design:paramtypes", [])
+    tslib_1.__metadata("design:paramtypes", [typeof (_a = typeof data_access_1.DataService !== "undefined" && data_access_1.DataService) === "function" ? _a : Object])
 ], JwtStrategy);
 exports.JwtStrategy = JwtStrategy;
 
@@ -615,10 +645,11 @@ exports.ApiUserModule = ApiUserModule;
 
 "use strict";
 
-var _a, _b, _c, _d, _e, _f, _g;
+var _a, _b, _c, _d, _e, _f, _g, _h;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
 const tslib_1 = __webpack_require__(/*! tslib */ "tslib");
+const client_1 = __webpack_require__(/*! .prisma/client */ ".prisma/client");
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const auth_1 = __webpack_require__(/*! @socketio/api/auth */ "./libs/api/auth/src/index.ts");
 const models_1 = __webpack_require__(/*! @socketio/api/models */ "./libs/api/models/src/index.ts");
@@ -628,7 +659,8 @@ let UserController = class UserController {
         this.userService = userService;
         this.authService = authService;
     }
-    getAll(page, limit) {
+    getAll(page, limit, user) {
+        console.log(user);
         return this.userService.getAll(page, limit);
     }
     add(user) {
@@ -643,27 +675,28 @@ tslib_1.__decorate([
     common_1.Get('user'),
     tslib_1.__param(0, common_1.Query('page')),
     tslib_1.__param(1, common_1.Query('limit')),
+    tslib_1.__param(2, auth_1.GetUser()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [String, String]),
-    tslib_1.__metadata("design:returntype", typeof (_a = typeof Promise !== "undefined" && Promise) === "function" ? _a : Object)
+    tslib_1.__metadata("design:paramtypes", [String, String, typeof (_a = typeof client_1.User !== "undefined" && client_1.User) === "function" ? _a : Object]),
+    tslib_1.__metadata("design:returntype", typeof (_b = typeof Promise !== "undefined" && Promise) === "function" ? _b : Object)
 ], UserController.prototype, "getAll", null);
 tslib_1.__decorate([
     common_1.Post('register'),
     tslib_1.__param(0, common_1.Body()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_b = typeof models_1.UserDto !== "undefined" && models_1.UserDto) === "function" ? _b : Object]),
-    tslib_1.__metadata("design:returntype", typeof (_c = typeof Promise !== "undefined" && Promise) === "function" ? _c : Object)
+    tslib_1.__metadata("design:paramtypes", [typeof (_c = typeof models_1.UserDto !== "undefined" && models_1.UserDto) === "function" ? _c : Object]),
+    tslib_1.__metadata("design:returntype", typeof (_d = typeof Promise !== "undefined" && Promise) === "function" ? _d : Object)
 ], UserController.prototype, "add", null);
 tslib_1.__decorate([
     common_1.Post('login'),
     tslib_1.__param(0, common_1.Body()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_d = typeof models_1.LoginDto !== "undefined" && models_1.LoginDto) === "function" ? _d : Object]),
-    tslib_1.__metadata("design:returntype", typeof (_e = typeof Promise !== "undefined" && Promise) === "function" ? _e : Object)
+    tslib_1.__metadata("design:paramtypes", [typeof (_e = typeof models_1.LoginDto !== "undefined" && models_1.LoginDto) === "function" ? _e : Object]),
+    tslib_1.__metadata("design:returntype", typeof (_f = typeof Promise !== "undefined" && Promise) === "function" ? _f : Object)
 ], UserController.prototype, "login", null);
 UserController = tslib_1.__decorate([
     common_1.Controller(),
-    tslib_1.__metadata("design:paramtypes", [typeof (_f = typeof user_service_1.UserService !== "undefined" && user_service_1.UserService) === "function" ? _f : Object, typeof (_g = typeof auth_1.AuthService !== "undefined" && auth_1.AuthService) === "function" ? _g : Object])
+    tslib_1.__metadata("design:paramtypes", [typeof (_g = typeof user_service_1.UserService !== "undefined" && user_service_1.UserService) === "function" ? _g : Object, typeof (_h = typeof auth_1.AuthService !== "undefined" && auth_1.AuthService) === "function" ? _h : Object])
 ], UserController);
 exports.UserController = UserController;
 
@@ -720,6 +753,17 @@ UserService = tslib_1.__decorate([
 ], UserService);
 exports.UserService = UserService;
 
+
+/***/ }),
+
+/***/ ".prisma/client":
+/*!*********************************!*\
+  !*** external ".prisma/client" ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require(".prisma/client");
 
 /***/ }),
 

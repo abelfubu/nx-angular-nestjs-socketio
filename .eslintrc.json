@@ -18,14 +18,6 @@
               }
             ]
           }
-        ],
-        "@angular-eslint/component-selector": [
-          "error",
-          {
-            "type": "element",
-            "style": "kebab-case",
-            "prefix": ["socket-io", "tng"]
-          }
         ]
       }
     },
