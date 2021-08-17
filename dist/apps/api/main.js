@@ -527,7 +527,6 @@ let ChatGateway = class ChatGateway {
     }
     handleMessage(_socket, room) {
         return this.roomService.create(room);
-        this.server.emit('message', 'test');
     }
     disconnect(socket) {
         socket.emit('Error', new common_1.UnauthorizedException());
@@ -1132,7 +1131,7 @@ module.exports = require(".prisma/client");
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\Users\adela\Desktop\courses\socketio\apps\api\src\main.ts */"./apps/api/src/main.ts");
+module.exports = __webpack_require__(/*! C:\Users\abelf\Desktop\code\sockets\apps\api\src\main.ts */"./apps/api/src/main.ts");
 
 
 /***/ }),

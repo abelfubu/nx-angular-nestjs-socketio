@@ -5,7 +5,7 @@ import { RouterModule, Routes } from '@angular/router';
 import {
   AuthGuard,
   AuthInterceptor,
-  ChatFeatureAuthModule,
+	ChatFeatureAuthModule,
   LoginComponent,
   RegisterComponent,
 } from '@socketio/chat/feature-auth';

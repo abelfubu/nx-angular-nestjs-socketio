@@ -6,7 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 @Module({
-  imports: [ApiUserModule, ApiChatModule, ApiRoomModule],
+	imports: [ApiUserModule, ApiChatModule, ApiRoomModule],
   controllers: [AppController],
   providers: [AppService],
 })
