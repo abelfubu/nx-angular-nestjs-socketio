@@ -37,20 +37,23 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         page: 1,
         limit: 10,
       });
+      console.log(user);
       this.server.emit('message', `Welcome ${user.username}!`);
       this.server.emit('rooms', rooms);
     } catch (error) {
+      console.log(error);
       this.disconnect(socket);
     }
   }
 
-  handleDisconnect(socket: Socket) {
-    socket.disconnect();
+  @SubscribeMessage('createRoom')
+  handlecreateRoom(socket: Socket, room: RoomDto): Promise<Room> {
+    return this.roomService.create(room, socket.data.user);
   }
 
-  @SubscribeMessage('createRoom')
-  handleMessage(_socket: Socket, room: RoomDto): Promise<Room> {
-    return this.roomService.create(room);
+  @SubscribeMessage('disconnect')
+  handleDisconnect(socket: Socket) {
+    socket.disconnect();
   }
 
   private disconnect(socket: Socket) {

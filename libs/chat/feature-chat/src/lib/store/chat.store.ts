@@ -58,8 +58,3 @@ export class ChatStore extends ComponentStore<ChatState> {
     rooms,
   }));
 }
-
-// SwitchMap cancels previous requests and only perform the last one
-// MergeMap performs all requests in parallel
-// ConcatMap Performs all requests in sequence
-// ExhaustMap cancels last requests until first request is finished

@@ -24,8 +24,8 @@ export class RoomController {
   }
 
   @Post()
-  create(@Body() room: RoomDto): Promise<Room> {
-    return this.roomService.create(room);
+  create(@Body() room: RoomDto, @GetUser() user: User): Promise<Room> {
+    return this.roomService.create(room, user);
   }
 
   @Patch(':id/user')

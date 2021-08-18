@@ -1,4 +1,4 @@
-import { Room } from '.prisma/client';
+import { Room, User } from '@prisma/client';
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { DataService } from '@socketio/api/data-access';
 import { RoomDto } from '@socketio/api/models';
@@ -11,14 +11,17 @@ export class RoomService {
     return await this.dataService.room.findMany({ include: { users: true } });
   }
 
-  async create(room: RoomDto): Promise<Room> {
-    return await this.dataService.room.create({ data: room });
+  async create(room: RoomDto, user: User): Promise<Room> {
+    const newRoom = await this.dataService.room.create({ data: room });
+    return this.addUser(newRoom.id, user.id);
   }
 
   async getRoomsByUserId(userId: string, { page = 1, limit = 10 }): Promise<Room[]> {
     const { rooms } = await this.dataService.user.findUnique({
       where: { id: userId },
-      select: { rooms: { take: limit, skip: (page - 1) * limit } },
+      select: {
+        rooms: { take: limit, skip: (page - 1) * limit, orderBy: { updatedAt: 'desc' } },
+      },
     });
     return rooms;
   }

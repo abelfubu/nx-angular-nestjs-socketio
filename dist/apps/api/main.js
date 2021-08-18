@@ -484,7 +484,7 @@ exports.ApiChatModule = ApiChatModule;
 
 "use strict";
 
-var _a, _b, _c, _d, _e, _f, _g;
+var _a, _b, _c, _d, _e, _f, _g, _h;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChatGateway = void 0;
 const tslib_1 = __webpack_require__(/*! tslib */ "tslib");
@@ -514,19 +514,21 @@ let ChatGateway = class ChatGateway {
                     page: 1,
                     limit: 10,
                 });
+                console.log(user);
                 this.server.emit('message', `Welcome ${user.username}!`);
                 this.server.emit('rooms', rooms);
             }
             catch (error) {
+                console.log(error);
                 this.disconnect(socket);
             }
         });
     }
+    handlecreateRoom(socket, room) {
+        return this.roomService.create(room, socket.data.user);
+    }
     handleDisconnect(socket) {
         socket.disconnect();
-    }
-    handleMessage(_socket, room) {
-        return this.roomService.create(room);
     }
     disconnect(socket) {
         socket.emit('Error', new common_1.UnauthorizedException());
@@ -542,12 +544,18 @@ tslib_1.__decorate([
     tslib_1.__metadata("design:type", Function),
     tslib_1.__metadata("design:paramtypes", [typeof (_b = typeof socket_io_1.Socket !== "undefined" && socket_io_1.Socket) === "function" ? _b : Object, typeof (_c = typeof models_1.RoomDto !== "undefined" && models_1.RoomDto) === "function" ? _c : Object]),
     tslib_1.__metadata("design:returntype", typeof (_d = typeof Promise !== "undefined" && Promise) === "function" ? _d : Object)
-], ChatGateway.prototype, "handleMessage", null);
+], ChatGateway.prototype, "handlecreateRoom", null);
+tslib_1.__decorate([
+    websockets_1.SubscribeMessage('disconnect'),
+    tslib_1.__metadata("design:type", Function),
+    tslib_1.__metadata("design:paramtypes", [typeof (_e = typeof socket_io_1.Socket !== "undefined" && socket_io_1.Socket) === "function" ? _e : Object]),
+    tslib_1.__metadata("design:returntype", void 0)
+], ChatGateway.prototype, "handleDisconnect", null);
 ChatGateway = tslib_1.__decorate([
     websockets_1.WebSocketGateway({
         cors: { origin: ['https://hoppscotch.io', 'http://localhost:4200'] },
     }),
-    tslib_1.__metadata("design:paramtypes", [typeof (_e = typeof jwt_1.JwtService !== "undefined" && jwt_1.JwtService) === "function" ? _e : Object, typeof (_f = typeof data_access_1.DataService !== "undefined" && data_access_1.DataService) === "function" ? _f : Object, typeof (_g = typeof room_1.RoomService !== "undefined" && room_1.RoomService) === "function" ? _g : Object])
+    tslib_1.__metadata("design:paramtypes", [typeof (_f = typeof jwt_1.JwtService !== "undefined" && jwt_1.JwtService) === "function" ? _f : Object, typeof (_g = typeof data_access_1.DataService !== "undefined" && data_access_1.DataService) === "function" ? _g : Object, typeof (_h = typeof room_1.RoomService !== "undefined" && room_1.RoomService) === "function" ? _h : Object])
 ], ChatGateway);
 exports.ChatGateway = ChatGateway;
 
@@ -805,7 +813,7 @@ exports.ApiRoomModule = ApiRoomModule;
 
 "use strict";
 
-var _a, _b, _c, _d, _e, _f, _g, _h;
+var _a, _b, _c, _d, _e, _f, _g, _h, _j;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RoomController = void 0;
 const tslib_1 = __webpack_require__(/*! tslib */ "tslib");
@@ -821,8 +829,8 @@ let RoomController = class RoomController {
     getAll() {
         return this.roomService.getAll();
     }
-    create(room) {
-        return this.roomService.create(room);
+    create(room, user) {
+        return this.roomService.create(room, user);
     }
     addUser(id, user) {
         return this.roomService.addUser(id, user.id);
@@ -840,30 +848,31 @@ tslib_1.__decorate([
 tslib_1.__decorate([
     common_1.Post(),
     tslib_1.__param(0, common_1.Body()),
+    tslib_1.__param(1, auth_1.GetUser()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [typeof (_b = typeof models_1.RoomDto !== "undefined" && models_1.RoomDto) === "function" ? _b : Object]),
-    tslib_1.__metadata("design:returntype", typeof (_c = typeof Promise !== "undefined" && Promise) === "function" ? _c : Object)
+    tslib_1.__metadata("design:paramtypes", [typeof (_b = typeof models_1.RoomDto !== "undefined" && models_1.RoomDto) === "function" ? _b : Object, typeof (_c = typeof client_1.User !== "undefined" && client_1.User) === "function" ? _c : Object]),
+    tslib_1.__metadata("design:returntype", typeof (_d = typeof Promise !== "undefined" && Promise) === "function" ? _d : Object)
 ], RoomController.prototype, "create", null);
 tslib_1.__decorate([
     common_1.Patch(':id/user'),
     tslib_1.__param(0, common_1.Param('id')),
     tslib_1.__param(1, auth_1.GetUser()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [String, typeof (_d = typeof client_1.User !== "undefined" && client_1.User) === "function" ? _d : Object]),
-    tslib_1.__metadata("design:returntype", typeof (_e = typeof Promise !== "undefined" && Promise) === "function" ? _e : Object)
+    tslib_1.__metadata("design:paramtypes", [String, typeof (_e = typeof client_1.User !== "undefined" && client_1.User) === "function" ? _e : Object]),
+    tslib_1.__metadata("design:returntype", typeof (_f = typeof Promise !== "undefined" && Promise) === "function" ? _f : Object)
 ], RoomController.prototype, "addUser", null);
 tslib_1.__decorate([
     common_1.Delete(':id/user'),
     tslib_1.__param(0, common_1.Param('id')),
     tslib_1.__param(1, auth_1.GetUser()),
     tslib_1.__metadata("design:type", Function),
-    tslib_1.__metadata("design:paramtypes", [String, typeof (_f = typeof client_1.User !== "undefined" && client_1.User) === "function" ? _f : Object]),
-    tslib_1.__metadata("design:returntype", typeof (_g = typeof Promise !== "undefined" && Promise) === "function" ? _g : Object)
+    tslib_1.__metadata("design:paramtypes", [String, typeof (_g = typeof client_1.User !== "undefined" && client_1.User) === "function" ? _g : Object]),
+    tslib_1.__metadata("design:returntype", typeof (_h = typeof Promise !== "undefined" && Promise) === "function" ? _h : Object)
 ], RoomController.prototype, "removeUser", null);
 RoomController = tslib_1.__decorate([
     common_1.UseGuards(auth_1.JwtGuard),
     common_1.Controller('room'),
-    tslib_1.__metadata("design:paramtypes", [typeof (_h = typeof room_service_1.RoomService !== "undefined" && room_service_1.RoomService) === "function" ? _h : Object])
+    tslib_1.__metadata("design:paramtypes", [typeof (_j = typeof room_service_1.RoomService !== "undefined" && room_service_1.RoomService) === "function" ? _j : Object])
 ], RoomController);
 exports.RoomController = RoomController;
 
@@ -894,16 +903,19 @@ let RoomService = class RoomService {
             return yield this.dataService.room.findMany({ include: { users: true } });
         });
     }
-    create(room) {
+    create(room, user) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            return yield this.dataService.room.create({ data: room });
+            const newRoom = yield this.dataService.room.create({ data: room });
+            return this.addUser(newRoom.id, user.id);
         });
     }
     getRoomsByUserId(userId, { page = 1, limit = 10 }) {
         return tslib_1.__awaiter(this, void 0, void 0, function* () {
             const { rooms } = yield this.dataService.user.findUnique({
                 where: { id: userId },
-                select: { rooms: { take: limit, skip: (page - 1) * limit } },
+                select: {
+                    rooms: { take: limit, skip: (page - 1) * limit, orderBy: { updatedAt: 'desc' } },
+                },
             });
             return rooms;
         });

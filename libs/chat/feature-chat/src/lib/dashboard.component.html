@@ -1,7 +1,23 @@
+<header tng-header *ngIf="{ in: isLoggedIn$ | async }.in as isLoggedIn">
+  <h5 logo routerLink="">Chat</h5>
+  <ng-container links>
+    <a routerLink="">Home</a>
+    <a routerLink="login" *ngIf="!isLoggedIn">Login</a>
+    <a (click)="logout()" *ngIf="isLoggedIn">Logout</a>
+  </ng-container>
+</header>
 <ng-container *ngIf="vm$ | async as vm">
-  <p>{{ vm.messages }}</p>
-
-  <ul>
-    <li *ngFor="let room of vm.rooms">{{ room.name }} | {{ room.description }}</li>
-  </ul>
+  <main>
+    <aside>
+      <ul>
+        <li *ngFor="let room of vm.rooms" (click)="selectRoom(room)">
+          <h4>{{ room.name }}</h4>
+          <p>{{ room.description }}</p>
+        </li>
+      </ul>
+    </aside>
+    <section>
+      <p>{{ vm.messages }}</p>
+    </section>
+  </main>
 </ng-container>

@@ -1,5 +1,5 @@
 @url = http://localhost:3333/api/room
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNrc2RhMTdvZzAxMzZ6NG0weWo1czc3aHQiLCJjcmVhdGVkQXQiOiIyMDIxLTA4LTE1VDE0OjAxOjQwLjM4NFoiLCJ1cGRhdGVkQXQiOiIyMDIxLTA4LTE1VDE0OjAxOjQwLjM4NFoiLCJ1c2VybmFtZSI6ImFiZWxmdWJ1IiwiZW1haWwiOiJhYmVsZnVidUBnbWFpbC5jb20iLCJpYXQiOjE2MjkwMzc5MDIsImV4cCI6MTYyOTA0MTUwMn0.5-SId0erft89ZfFzmFKRdS9SS86nlPVz1YF5EfJXYQU
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNrc2V5bWp4ejAwMDBsb3VsdjIwa2p4dmkiLCJjcmVhdGVkQXQiOiIyMDIxLTA4LTE2VDE4OjE3OjUzLjAxNVoiLCJ1cGRhdGVkQXQiOiIyMDIxLTA4LTE2VDE4OjE3OjUzLjAxNVoiLCJ1c2VybmFtZSI6ImFiZWxmdWJ1IiwiZW1haWwiOiJhYmVsZnVidUBnbWFpbC5jb20iLCJpYXQiOjE2MjkzMDQzMjYsImV4cCI6MTYyOTMwNzkyNn0.VLRuCaVZ3c0yOfpaX8Qa1JZpagLKaHNS9A7AuSr4zSY
 ###
 GET {{url}}
 Authorization: Bearer {{token}}
@@ -22,9 +22,9 @@ GET {{url}}/02
 DELETE {{url}}/4
 
 ###
-PATCH {{url}}/cksdb4e0s0047oom0e2sw8dnk/user
+PATCH {{url}}/ckshpqoid0013qwulv4cnih5u/user
 Authorization: Bearer {{token}}
 
 ###
-DELETE {{url}}/cksdb4e0s0047oom0e2sw8dnk/user
+DELETE {{url}}/ckshpqoid0013qwulv4cnih5u/user
 Authorization: Bearer {{token}}

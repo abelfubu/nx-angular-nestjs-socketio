@@ -18,5 +18,6 @@ export class ChatSocket extends Socket {
         },
       },
     });
+    console.log('new');
   }
 }
