@@ -249,6 +249,16 @@
           },
           "defaultConfiguration": "development"
         },
+        "serve-dev": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              { "command": "docker-compose up" },
+              { "command": "nx serve api" },
+              { "command": "nx serve chat" }
+            ]
+          }
+        },
         "extract-i18n": {
           "executor": "@angular-devkit/build-angular:extract-i18n",
           "options": {
